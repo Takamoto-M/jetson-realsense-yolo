@@ -3,8 +3,16 @@
 RealSense D435i と YOLO(セグメンテーション + トラッキング)で人物を検出し、人物マスク内の Depth の中央値からカメラまでの距離を表示します。
 処理区間ごとの時間を計測する機能と、TensorRT エンジンでの実行に対応しています。
 
+Jetson Orin Nano 上で、処理合計を 61 ms → 21 ms(16 FPS → 30 FPS)に改善しました。
+
 - 前回の記事:[Jetson Orin Nano + RealSense + YOLOでリアルタイム人物検出を動かしてみた](https://qiita.com/tkmtmnt/items/edf50345684921c85823)
-- 計測と高速化の記録:<!-- TODO: 続編記事の URL -->(Qiita)
+- 今回の記事:<!-- TODO: 続編記事の URL -->(Qiita)
+- 計測と改善の詳細:[docs/profiling.md](docs/profiling.md)(生ログは [results/](results/))
+- AI エージェントを使った進め方:[docs/claude-code-workflow.md](docs/claude-code-workflow.md)
+
+## AI の使用について
+
+このリポジトリのコードとドキュメントは、Claude Code(AI エージェント)を使って作成しました。目的の設定、方針の判断、Jetson での実験と動作確認は、筆者が行いました。
 
 ## 動作確認環境
 
@@ -42,7 +50,7 @@ python3 realsense_yolo_depth.py --profile --no-display --max-frames 600   # 処�
 
 ```bash
 yolo export model=yolo26n-seg.pt format=engine half=True imgsz=480,640
-python3 realsense_yolo_depth.py --model yolo26n-seg.engine
+python3 realsense_yolo_depth.py --model yolo26n-seg.engine --tracker bytetrack --fast-draw   # 最速の設定
 ```
 
 <!-- TODO: ライセンスを決めたら追記(Ultralytics は AGPL-3.0) -->

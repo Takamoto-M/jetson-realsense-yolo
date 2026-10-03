@@ -1,0 +1,69 @@
+Loading yolo26n-seg.engine for TensorRT inference...
+[10/03/2026-20:56:08] [TRT] [I] Loaded engine size: 8 MiB
+[10/03/2026-20:56:08] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +9, now: CPU 0, GPU 14 (MiB)
+[profile] frames 31-130  FPS 30.0
+    11.29 ms  カメラ待ち
+     0.93 ms  カメラ取得・位置合わせ
+     3.73 ms  YOLO 推論
+     6.14 ms  YOLO 前処理+後処理
+     3.08 ms  YOLO トラッキング等
+     1.38 ms  マスク処理+距離計算
+     6.76 ms  描画
+     0.00 ms  画面表示
+    22.04 ms  処理合計(カメラ待ちを除く)
+    33.32 ms  フレーム全体
+[profile] frames 131-230  FPS 30.0
+    11.37 ms  カメラ待ち
+     0.93 ms  カメラ取得・位置合わせ
+     3.73 ms  YOLO 推論
+     6.08 ms  YOLO 前処理+後処理
+     3.05 ms  YOLO トラッキング等
+     1.38 ms  マスク処理+距離計算
+     6.77 ms  描画
+     0.00 ms  画面表示
+    21.96 ms  処理合計(カメラ待ちを除く)
+    33.33 ms  フレーム全体
+[profile] frames 231-330  FPS 30.0
+    11.40 ms  カメラ待ち
+     0.92 ms  カメラ取得・位置合わせ
+     3.73 ms  YOLO 推論
+     6.03 ms  YOLO 前処理+後処理
+     3.07 ms  YOLO トラッキング等
+     1.38 ms  マスク処理+距離計算
+     6.78 ms  描画
+     0.00 ms  画面表示
+    21.93 ms  処理合計(カメラ待ちを除く)
+    33.33 ms  フレーム全体
+[profile] frames 331-430  FPS 29.9
+     7.02 ms  カメラ待ち
+     0.91 ms  カメラ取得・位置合わせ
+     3.74 ms  YOLO 推論
+     6.06 ms  YOLO 前処理+後処理
+     3.36 ms  YOLO トラッキング等
+     2.21 ms  マスク処理+距離計算
+    10.06 ms  描画
+     0.00 ms  画面表示
+    26.36 ms  処理合計(カメラ待ちを除く)
+    33.38 ms  フレーム全体
+[profile] frames 431-530  FPS 30.0
+     5.98 ms  カメラ待ち
+     0.92 ms  カメラ取得・位置合わせ
+     3.75 ms  YOLO 推論
+     6.21 ms  YOLO 前処理+後処理
+     3.44 ms  YOLO トラッキング等
+     2.35 ms  マスク処理+距離計算
+    10.66 ms  描画
+     0.00 ms  画面表示
+    27.35 ms  処理合計(カメラ待ちを除く)
+    33.33 ms  フレーム全体
+[profile] SUMMARY 570 frames(最初の 30 フレームを除く)  FPS 30.0
+     9.02 ms  カメラ待ち
+     0.93 ms  カメラ取得・位置合わせ
+     3.74 ms  YOLO 推論
+     6.10 ms  YOLO 前処理+後処理
+     3.23 ms  YOLO トラッキング等
+     1.81 ms  マスク処理+距離計算
+     8.49 ms  描画
+     0.00 ms  画面表示
+    24.31 ms  処理合計(カメラ待ちを除く)
+    33.34 ms  フレーム全体
