@@ -5,7 +5,7 @@ import numpy as np
 import pyrealsense2 as rs
 from ultralytics import YOLO
 
-from perf_profiler import FrameProfiler, NullProfiler, collect_env_info
+from perf_profiler import SectionTimer
 
 
 # ==========================================
@@ -16,7 +16,7 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument(
     "--profile", action="store_true",
-    help="性能計測を有効にする(CSV・環境情報・統計を出力)"
+    help="処理区間ごとの時間を計測して表示する"
 )
 parser.add_argument(
     "--warmup", type=int, default=30,
@@ -25,10 +25,6 @@ parser.add_argument(
 parser.add_argument(
     "--report-interval", type=int, default=100,
     help="統計を表示するフレーム間隔(default: 100)"
-)
-parser.add_argument(
-    "--profile-dir", default="profile_logs",
-    help="計測結果の出力先ディレクトリ(default: profile_logs)"
 )
 parser.add_argument(
     "--no-display", action="store_true",
@@ -41,6 +37,14 @@ parser.add_argument(
 parser.add_argument(
     "--model", default="yolo26n-seg.pt",
     help="YOLO モデルファイル(.pt / TensorRT の .engine など。default: yolo26n-seg.pt)"
+)
+parser.add_argument(
+    "--tracker", default="botsort", choices=["botsort", "bytetrack"],
+    help="トラッカー(default: botsort = Ultralytics の既定)"
+)
+parser.add_argument(
+    "--fast-draw", action="store_true",
+    help="YOLO 側のマスク描画を省く(後で人物領域を塗りつぶすため、結果の画像は同じ)"
 )
 args = parser.parse_args()
 
@@ -79,27 +83,13 @@ profile = pipeline.start(config)
 
 
 # ==========================================
-# 性能計測
+# 処理時間の計測(--profile 指定時のみ)
 # ==========================================
-if args.profile:
-    prof = FrameProfiler(
-        args.profile_dir,
-        warmup=args.warmup,
-        report_interval=args.report_interval,
-        target_fps=30,
-    )
-    prof.save_env_info(
-        collect_env_info(
-            profile,
-            extra={
-                "model": args.model,
-                "stream": "color 640x480 bgr8 30fps / depth 640x480 z16 30fps",
-                "args": vars(args),
-            },
-        )
-    )
-else:
-    prof = NullProfiler()
+prof = SectionTimer(
+    args.profile,
+    warmup=args.warmup,
+    report_interval=args.report_interval,
+)
 
 processed_frames = 0
 mask_shape_warned = False
@@ -114,13 +104,13 @@ align = rs.align(rs.stream.color)
 try:
     while True:
 
-        prof.begin_frame()
+        prof.start_frame()
 
         # ----------------------------------
         # RealSenseからフレーム取得
         # ----------------------------------
         frames = pipeline.wait_for_frames()
-        prof.lap("capture_wait")
+        prof.lap("wait")
 
         # Depth画像をRGB画像の座標系へ合わせる
         aligned_frames = align.process(frames)
@@ -138,7 +128,7 @@ try:
         depth_image = np.asanyarray(
             depth_frame.get_data()
         )
-        prof.lap("capture_align")
+        prof.lap("camera")
 
 
         # ----------------------------------
@@ -147,8 +137,9 @@ try:
         results = model.track(
             source=color_image,
             classes=[0],       # personのみ
-            device=0,          # RTX 5080
+            device=0,          # GPU
             persist=True,
+            tracker=f"{args.tracker}.yaml",
             verbose=False
         )
         prof.sync()
@@ -157,7 +148,8 @@ try:
         result = results[0]
 
         # YOLOによる描画
-        annotated_frame = result.plot()
+        # (--fast-draw: マスクは下で塗りつぶすので、YOLO 側では描かない)
+        annotated_frame = result.plot(masks=not args.fast_draw)
         prof.lap("draw")
 
 
@@ -192,7 +184,7 @@ try:
                 )
             else:
                 track_ids = [None] * len(masks)
-            prof.lap("mask")
+            prof.lap("distance")
 
 
             # ----------------------------------
@@ -211,7 +203,7 @@ try:
                 )
 
                 person_mask = mask_resized > 0.5
-                prof.lap("mask")
+                prof.lap("distance")
 
                 # 人物領域を濃い青で塗る
                 annotated_frame[person_mask] = (155, 0, 0)
@@ -229,7 +221,7 @@ try:
                 ]
 
                 if len(valid_depth) == 0:
-                    prof.lap("depth")
+                    prof.lap("distance")
                     continue
 
 
@@ -251,7 +243,7 @@ try:
                     np.median(valid_depth)
                     * depth_scale
                 )
-                prof.lap("depth")
+                prof.lap("distance")
 
 
                 # ----------------------------------
@@ -312,13 +304,7 @@ try:
             if key == ord("q"):
                 break
 
-        prof.end_frame(
-            n_persons=(
-                len(result.boxes) if result.boxes is not None else 0
-            ),
-            rs_frame_number=color_frame.get_frame_number(),
-            yolo_speed=result.speed,
-        )
+        prof.end_frame(result.speed)
 
         # 指定フレーム数で自動終了
         processed_frames += 1
@@ -328,7 +314,7 @@ try:
 
 finally:
 
-    prof.close()
+    prof.summary()
     pipeline.stop()
     if not args.no_display:
         cv2.destroyAllWindows()
