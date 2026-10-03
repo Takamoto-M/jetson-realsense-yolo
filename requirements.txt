@@ -1,0 +1,11 @@
+# torch / torchvision は、環境に合った CUDA 版を先にインストールしてください
+# (Jetson では JetPack に対応したもの。README.md の「セットアップ」参照)
+#
+# 動作確認バージョン(PC / Jetson)
+#   numpy         2.5.3 / 2.2.6
+#   opencv-python 5.0.0.93
+#   pyrealsense2  2.58.4.10922
+numpy
+opencv-python
+pyrealsense2
+ultralytics==8.4.165

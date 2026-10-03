@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# 仮想環境
+venv/
+.venv/
+venv_*/
+
+# モデル・変換結果(各自ダウンロード / 生成する)
+*.pt
+*.onnx
+*.engine
+
+# 計測結果・Ultralytics の出力
+profile_logs/
+runs/
+
+# 画像・動画
+*.jpg
+*.jpeg
+*.png
+*.mp4
+*.avi
+*.bag
+
+# エディタ・OS
+.vscode/
+.idea/
+.DS_Store
