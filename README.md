@@ -52,5 +52,3 @@ python3 realsense_yolo_depth.py --profile --no-display --max-frames 600   # 処�
 yolo export model=yolo26n-seg.pt format=engine half=True imgsz=480,640
 python3 realsense_yolo_depth.py --model yolo26n-seg.engine --tracker bytetrack --fast-draw   # 最速の設定
 ```
-
-<!-- TODO: ライセンスを決めたら追記(Ultralytics は AGPL-3.0) -->
