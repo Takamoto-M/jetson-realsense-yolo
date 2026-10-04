@@ -6,7 +6,7 @@ RealSense D435i と YOLO を使い、人物検出・追跡と距離計測を行�
 Jetson Orin Nano でのリアルタイム動作を目指し、処理区間ごとの時間を計測して改善しました。TensorRT の導入とトラッカーの変更により、処理時間の合計を約 61 ms から約 24 ms に短縮し、実測 FPS は約 16 から約 30 に向上しました。
 
 - 前回の記事：[Jetson Orin Nano + RealSense + YOLOでリアルタイム人物検出を動かしてみた](https://qiita.com/tkmtmnt/items/edf50345684921c85823)
-- 今回の記事：[Claude Code で Jetson Orin Nano 上の YOLO を計測・高速化してみた(16 FPS → 30 FPS)]（https://qiita.com/tkmtmnt/items/320f8e6ee7b3d09273da）
+- 今回の記事：[Claude Code で Jetson Orin Nano 上の YOLO を計測・高速化してみた(16 FPS → 30 FPS)](https://qiita.com/tkmtmnt/items/320f8e6ee7b3d09273da)
 - 計測と改善の詳細：[docs/profiling.md](docs/profiling.md)（計測ログは [results/](results/)）
 - AI エージェントを使った進め方：[docs/claude-code-workflow.md](docs/claude-code-workflow.md)
 
