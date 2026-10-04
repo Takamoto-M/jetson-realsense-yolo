@@ -3,6 +3,8 @@
 このリポジトリのコードと計測は、AI エージェント Claude Code(ホスト PC 上で動作)を使って進めました。
 人と AI の役割分担と、ホスト PC から Jetson を操作した方法を記録します。
 
+![ホスト PC の Claude Code が SSH で Jetson を操作する流れ](images/ssh_workflow.png)
+
 ## 構成
 
 ```
